@@ -37,6 +37,9 @@ c.TouchesOneByOne               = cc.TOUCHES_ONE_BY_ONE
 c.TOUCH_MODE_ALL_AT_ONCE        = c.TouchesAllAtOnce
 c.TOUCH_MODE_ONE_BY_ONE         = c.TouchesOneByOne
 
+local flagNodeTouchInCocos = false
+if Node.removeTouchEvent then flagNodeTouchInCocos = true end
+
 local function isPointIn( rc, pt )
     local rect = cc.rect(rc.x, rc.y, rc.width, rc.height)
     return cc.rectContainsPoint(rect, pt)
@@ -195,6 +198,11 @@ function Node:isKeypadEnabled()
 end
 
 function Node:scheduleUpdate()
+    if not flagNodeTouchInCocos then
+        tolua.getcfunction(self, "scheduleUpdate")(self)
+        return
+    end
+
     local listener = function (dt)
         self:EventDispatcher(c.NODE_ENTER_FRAME_EVENT, dt)
     end
@@ -203,6 +211,11 @@ function Node:scheduleUpdate()
 end
 
 function Node:addNodeEventListener( evt, hdl, tag, priority )
+    if not flagNodeTouchInCocos then
+        tolua.getcfunction(self, "addNodeEventListener")(self, evt, hdl, tag, priority)
+        return
+    end
+
     priority = priority or 0
 
     if not self._scriptEventListeners_ then
@@ -239,17 +252,15 @@ function Node:addNodeEventListener( evt, hdl, tag, priority )
         table.insert(eventListeners_, lis)
     end
 
-    -- if evt==c.NODE_ENTER_FRAME_EVENT then
-    --     -- do nothing
-    -- elseif evt==c.KEYPAD_EVENT then
-    -- else
-    --     -- self:addLuaEventListener( evt, hdl, tag, priority ) 
-    -- end
-
     return self._nextScriptEventHandleIndex_
 end
 
 function Node:removeNodeEventListenersByEvent( evt )
+    if not flagNodeTouchInCocos then
+        tolua.getcfunction(self, "removeNodeEventListenersByEvent")(self, evt)
+        return
+    end
+
     if self._scriptEventListeners_ and self._scriptEventListeners_[evt] then
         if evt==c.KEYPAD_EVENT then
             self:setKeypadEnabled(false)
@@ -264,6 +275,11 @@ function Node:removeNodeEventListenersByEvent( evt )
 end
 
 function Node:removeAllNodeEventListeners()
+    if not flagNodeTouchInCocos then
+        tolua.getcfunction(self, "removeAllNodeEventListeners")(self)
+        return
+    end
+
     self:removeNodeEventListenersByEvent(c.NODE_EVENT)
     self:removeNodeEventListenersByEvent(c.NODE_ENTER_FRAME_EVENT)
     self:removeNodeEventListenersByEvent(c.NODE_TOUCH_EVENT)
