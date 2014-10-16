@@ -33,7 +33,7 @@ local UIPageViewItem = import(".UIPageViewItem")
 
 local UIPageView = class("UIPageView", function()
 	-- local node = display.newNode()
-	local node = cc.ClippingRegionNode:create()
+	local node = display.newClippingRegionNode()
 	-- node:setContentSize(display.width, display.height)
 	return node
 end)

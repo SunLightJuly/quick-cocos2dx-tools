@@ -268,6 +268,8 @@ function Node:removeNodeEventListenersByEvent( evt )
             self:unscheduleUpdate()
         elseif evt==c.NODE_TOUCH_EVENT then
             self:removeTouchEvent()
+        elseif evt==c.NODE_TOUCH_CAPTURE_EVENT then
+            self:removeTouchEvent()
         end
 
         self._scriptEventListeners_[evt] = nil
@@ -283,6 +285,7 @@ function Node:removeAllNodeEventListeners()
     self:removeNodeEventListenersByEvent(c.NODE_EVENT)
     self:removeNodeEventListenersByEvent(c.NODE_ENTER_FRAME_EVENT)
     self:removeNodeEventListenersByEvent(c.NODE_TOUCH_EVENT)
+    self:removeNodeEventListenersByEvent(c.NODE_TOUCH_CAPTURE_EVENT)
     self:removeNodeEventListenersByEvent(c.KEYPAD_EVENT)
 end
 
